@@ -93,6 +93,22 @@ app.delete('/nomor-surat/:id', (req, res) => {
     })
 })
 
+app.delete('/nomor-surat', (req, res) => {
+    const query = `DELETE * FROM ${table1}`
+    db.query(query, (error, fields) => {
+        if (error) response(res, 'invalid', 'error', 500)
+        if (fields?.affectedRows) {
+            const data = {
+                isDeleted: fields.affectedRows
+            }
+            response(res, 'Data Deleted Successfully', data)
+        } else {
+            response(res, 'Data tidak ditemukan', 'error: not found', 404)
+        }
+    })
+    db.query(`ALTER TABLE ${table1} AUTO_INCREMENT = 1`)
+})
+
 app.get('/periode', (req, res) => {
     const query = `SELECT * FROM ${table2}`
     db.query(query, (error, fields) => {
