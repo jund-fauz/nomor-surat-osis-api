@@ -9,7 +9,7 @@ const table1 = '`nomor-osis`'
 const table2 = '`periode-osis`'
 
 app.use(bodyParser.json())
-app.use(cors())
+app.use(cors({ origin: 'https://jund-fauz.github.io'}))
 
 require('dotenv').config()
 
