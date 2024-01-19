@@ -1,4 +1,5 @@
 const express = require('express')
+const cors = require('cors')
 const app = express()
 const port = process.env.DATABASE_PORT || 3000
 const bodyParser = require('body-parser')
@@ -8,6 +9,7 @@ const table1 = '`nomor-osis`'
 const table2 = '`periode-osis`'
 
 app.use(bodyParser.json())
+app.use(cors)
 
 require('dotenv').config()
 
@@ -25,19 +27,18 @@ app.get('/nomor-surat', (req, res) => {
 
 app.post('/nomor-surat', (req, res) => {
     const date = new Date()
-    const { jenisSurat, pengirim, tanggal = date.getDate(), bulan = date.getMonth()+1, tahun = date.getFullYear(), perihal = null, link = null } = req.body
-    const query = `INSERT INTO ${table1} (jenis_surat, pengirim, tanggal, bulan, tahun, perihal, link) VALUES ('${jenisSurat}', '${pengirim}', ${tanggal}, ${bulan}, ${tahun}, '${perihal}', '${link}')`
+    const { jenisSurat, pengirim = 'Sekretaris', tanggal = date.getDate(), bulan = date.getMonth()+1, tahun = date.getFullYear(), perihal = null, link = null, withDate = true } = req.body
+    let dateStr = withDate ? tanggal : 0
+    const query = `INSERT INTO ${table1} (jenis_surat, pengirim, tanggal, bulan, tahun, perihal, link) VALUES ('${jenisSurat}', '${pengirim}', ${dateStr}, ${bulan}, ${tahun}, '${perihal}', '${link}')`
     db.query(query, (error, fields) => {
         if (error) response(res, 'invalid', 'error', 500)
-        if (fields?.affectedRows) {
+        else if (fields?.affectedRows) {
             const data = {
                 isSuccess: fields.affectedRows,
                 id: fields.insertId
             }
             response(res, 'Data Added Successfuly', data, 200)
-        } else {
-            response(res, 'Gagal menambahkan data nomor surat OSIS', 'error', 400)
-        }
+        } else response(res, 'Gagal menambahkan data nomor surat OSIS', 'error', 400)
     })
 })
 
@@ -47,7 +48,7 @@ app.put('/nomor-surat/:id', (req, res) => {
     const query = `UPDATE ${table1} SET jenis_surat = '${jenisSurat}', pengirim = '${pengirim}', perihal = '${perihal}', link = '${link}' WHERE id = ${id}`
     db.query(query, (error, fields) => {
         if (error) response(res, 'invalid', 'error', 500)
-        if (fields?.affectedRows) {
+        else if (fields?.affectedRows) {
             const data = {
                 isSuccess: fields.affectedRows,
                 id: fields.insertId
@@ -65,7 +66,7 @@ app.put('/nomor-surat/:id/link', (req, res) => {
     const query = `UPDATE ${table1} SET link = '${link}' WHERE id = ${id}`
     db.query(query, (error, fields) => {
         if (error) response(res, 'invalid', 'error', 500)
-        if (fields?.affectedRows) {
+        else if (fields?.affectedRows) {
             const data = {
                 isSuccess: fields.affectedRows,
                 id: fields.insertId
@@ -82,7 +83,7 @@ app.delete('/nomor-surat/:id', (req, res) => {
     const query = `DELETE FROM ${table1} WHERE id = ${id}`
     db.query(query, (error, fields) => {
         if (error) response(res, 'invalid', 'error', 500)
-        if (fields?.affectedRows) {
+        else if (fields?.affectedRows) {
             const data = {
                 isDeleted: fields.affectedRows
             }
@@ -94,16 +95,14 @@ app.delete('/nomor-surat/:id', (req, res) => {
 })
 
 app.delete('/nomor-surat', (req, res) => {
-    const query = `DELETE * FROM ${table1}`
+    const query = `DELETE FROM ${table1}`
     db.query(query, (error, fields) => {
         if (error) response(res, 'invalid', 'error', 500)
-        if (fields?.affectedRows) {
+        else if (fields?.affectedRows) {
             const data = {
                 isDeleted: fields.affectedRows
             }
             response(res, 'Data Deleted Successfully', data)
-        } else {
-            response(res, 'Data tidak ditemukan', 'error: not found', 404)
         }
     })
     db.query(`ALTER TABLE ${table1} AUTO_INCREMENT = 1`)
@@ -122,7 +121,7 @@ app.post('/:year', (req, res) => {
     const query = `INSERT INTO ${table2} (periode) VALUES (${year})`
     db.query(query, (error, fields) => {
         if (error) response(res, 'invalid', 'error', 500)
-        if (fields?.affectedRows) {
+        else if (fields?.affectedRows) {
             const data = {
                 isSuccess: fields.affectedRows,
                 id: fields.insertId
@@ -137,7 +136,7 @@ app.put('/:year', (req, res) => {
     const query = `UPDATE ${table2} SET periode = ${year}`
     db.query(query, (error, fields) => {
         if (error) response(res, 'invalid', 'error', 500)
-        if (fields?.affectedRows) {
+        else if (fields?.affectedRows) {
             const data = {
                 isSuccess: fields.affectedRows,
                 message: fields.message
