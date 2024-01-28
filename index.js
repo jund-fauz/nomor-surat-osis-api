@@ -25,6 +25,15 @@ app.get('/nomor-surat', (req, res) => {
     })
 })
 
+app.get('/nomor-surat/:id', (req, res) => {
+    const { id } = req.params
+    const query = `SELECT * FROM ${table1} WHERE id = ${id}`
+    db.query(query, (error, fields) => {
+        if (error) response(res, 'invalid', 'error', 500)
+        response(res, 'List nomor surat berhasil diberikan', fields)
+    })
+})
+
 app.post('/nomor-surat', (req, res) => {
     const date = new Date()
     const { jenisSurat, pengirim = 'Sekretaris', tanggal = date.getDate(), bulan = date.getMonth()+1, tahun = date.getFullYear(), perihal = null, link = null, withDate = true } = req.body
