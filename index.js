@@ -18,19 +18,14 @@ app.get('/', (req, res) => {
 })
 
 app.get('/nomor-surat', (req, res) => {
-  const query = `SELECT * FROM ${table1}`
+  const { search } = req.query
+  const query =
+    search === undefined
+      ? `SELECT * FROM ${table1}`
+      : `SELECT * FROM ${table1} WHERE pengirim LIKE '%${search}%' OR perihal LIKE '%${search}%'`
   db.query(query, (error, fields) => {
     if (error) response(res, 'invalid', 'error', 500)
-    response(res, 'List nomor surat berhasil diberikan', fields)
-  })
-})
-
-app.get('/nomor-surat/:id', (req, res) => {
-  const { id } = req.params
-  const query = `SELECT * FROM ${table1} WHERE id = ${id}`
-  db.query(query, (error, fields) => {
-    if (error) response(res, 'invalid', 'error', 500)
-    response(res, 'List nomor surat berhasil diberikan', fields)
+    else response(res, 'List nomor surat berhasil diberikan', fields)
   })
 })
 
