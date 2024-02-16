@@ -5,11 +5,8 @@ const port = process.env.DATABASE_PORT || 3000
 const bodyParser = require('body-parser')
 const response = require('./response')
 const db = require('./connection')
-const analytics = require('@vercel/analytics')
 const table1 = '`nomor-osis`'
 const table2 = '`periode-osis`'
-
-analytics.inject()
 
 app.use(bodyParser.json())
 app.use(cors())
