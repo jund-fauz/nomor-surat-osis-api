@@ -12,7 +12,9 @@ const table2 = '`periode-osis`'
 analytics.inject()
 
 app.use(bodyParser.json())
-app.use(cors())
+app.use(cors({
+  origin: false
+}))
 
 require('dotenv').config()
 
@@ -21,7 +23,7 @@ app.get('/', (req, res) => {
 })
 
 app.get('/nomor-surat', (req, res) => {
-  const { search, filter } = req.query
+  const {search, filter} = req.query
   let query = `SELECT * FROM ${table1}`
   if (search !== undefined)
     query += ` WHERE perihal LIKE '%${search}%'`
@@ -61,8 +63,8 @@ app.post('/nomor-surat', (req, res) => {
 })
 
 app.put('/nomor-surat/:id', (req, res) => {
-  const { id } = req.params
-  const { jenis, pengirim, perihal = null, link = null, tanggal, bulan, tahun } = req.body
+  const {id} = req.params
+  const {jenis, pengirim, perihal = null, link = null, tanggal, bulan, tahun} = req.body
   const query = `UPDATE ${table1} SET jenis_surat = '${jenis}', pengirim = '${pengirim}', perihal = '${perihal}', link = '${link}', tanggal = ${tanggal}, bulan = ${bulan}, tahun = ${tahun} WHERE id = ${id}`
   db.query(query, (error, fields) => {
     if (error) response(res, 'invalid', error, 500)
@@ -79,8 +81,8 @@ app.put('/nomor-surat/:id', (req, res) => {
 })
 
 app.put('/nomor-surat/:id/link', (req, res) => {
-  const { id } = req.params
-  const { link } = req.body
+  const {id} = req.params
+  const {link} = req.body
   const query = `UPDATE ${table1} SET link = '${link}' WHERE id = ${id}`
   db.query(query, (error, fields) => {
     if (error) response(res, 'invalid', error, 500)
@@ -97,7 +99,7 @@ app.put('/nomor-surat/:id/link', (req, res) => {
 })
 
 app.delete('/nomor-surat/:id', (req, res) => {
-  const { id } = req.params
+  const {id} = req.params
   let query = `DELETE FROM ${table1} WHERE id = ${id}`
   db.query(query, (error, fields) => {
     if (error) response(res, 'invalid', error, 500)
@@ -115,7 +117,7 @@ app.delete('/nomor-surat/:id', (req, res) => {
     const obj = fields[0]
     const result = obj[Object.keys(obj)[0]]
     for (let i = id; i <= result; i++) {
-        db.query(`UPDATE ${table1} SET id = ${i} WHERE id = ${parseInt(i) + 1}`)
+      db.query(`UPDATE ${table1} SET id = ${i} WHERE id = ${parseInt(i) + 1}`)
     }
     db.query(`ALTER TABLE ${table1} AUTO_INCREMENT = ${result + 1}`)
   })
@@ -144,7 +146,7 @@ app.get('/periode', (req, res) => {
 })
 
 app.post('/:year', (req, res) => {
-  const { year } = req.params
+  const {year} = req.params
   const query = `INSERT INTO ${table2} (periode) VALUES (${year})`
   db.query(query, (error, fields) => {
     if (error) response(res, 'invalid', error, 500)
@@ -159,7 +161,7 @@ app.post('/:year', (req, res) => {
 })
 
 app.put('/:year', (req, res) => {
-  const { year } = req.params
+  const {year} = req.params
   const query = `UPDATE ${table2} SET periode = ${year}`
   db.query(query, (error, fields) => {
     if (error) response(res, 'invalid', error, 500)
