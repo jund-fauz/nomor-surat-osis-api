@@ -5,8 +5,11 @@ const port = process.env.DATABASE_PORT || 3000
 const bodyParser = require('body-parser')
 const response = require('./response')
 const db = require('./connection')
+const analytics = require('@vercel/analytics')
 const table1 = '`nomor-osis`'
 const table2 = '`periode-osis`'
+
+analytics.inject()
 
 app.use(bodyParser.json())
 app.use(cors())
@@ -18,11 +21,12 @@ app.get('/', (req, res) => {
 })
 
 app.get('/nomor-surat', (req, res) => {
-  const { search } = req.query
-  const query =
-    search === undefined
-      ? `SELECT * FROM ${table1}`
-      : `SELECT * FROM ${table1} WHERE pengirim LIKE '%${search}%' OR perihal LIKE '%${search}%'`
+  const { search, filter } = req.query
+  let query = `SELECT * FROM ${table1}`
+  if (search !== undefined)
+    query += ` WHERE perihal LIKE '%${search}%'`
+  // if (filter !== undefined)
+
   db.query(query, (error, fields) => {
     if (error) response(res, 'invalid', error, 500)
     else response(res, 'List nomor surat berhasil diberikan', fields)
@@ -164,7 +168,7 @@ app.put('/:year', (req, res) => {
         isSuccess: fields.affectedRows,
         message: fields.message,
       }
-      response(res, 'Data Updated Successfull data,y')
+      response(res, 'Data Updated Successfully', data)
     }
   })
 })
