@@ -10,7 +10,7 @@ const table2 = '`periode-osis`'
 
 app.use(bodyParser.json())
 app.use(cors({
-  origin: 'https://jund-fauz.github.io/nomor-surat-osis',
+  origin: 'https://jund-fauz.github.io/nomor-surat-osis/',
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'X-Requested-With']
 }))
