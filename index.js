@@ -9,13 +9,17 @@ const table1 = '`nomor-osis`'
 const table2 = '`periode-osis`'
 
 app.use(bodyParser.json())
-app.use(cors())
+app.use(cors({
+  origin: 'https://jund-fauz.github.io/nomor-surat-osis',
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'X-Requested-With']
+}))
 
-app.all('*', (req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*')
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE')
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization')
-})
+// app.all('*', (req, res, next) => {
+//   res.header('Access-Control-Allow-Origin', '*')
+//   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE')
+//   res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+// })
 
 require('dotenv').config()
 
