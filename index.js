@@ -6,7 +6,7 @@ import router from "./routes/web.js";
 dotenv.config();
 
 const app = express();
-const port = process.env.PORT;
+const port = process.env.DATABASE_PORT;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
