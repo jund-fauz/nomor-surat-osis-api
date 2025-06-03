@@ -1,6 +1,14 @@
 import Users from "../models/users.js";
 import bcrypt from "bcrypt";
 
+/**
+ * Sends a standardized JSON response with a message and payload.
+ *
+ * @param {object} res - The HTTP response object.
+ * @param {string} message - The message to include in the response.
+ * @param {*} data - The payload to include in the response.
+ * @param {number} [statusCode=200] - The HTTP status code for the response.
+ */
 function response(res, message, data, statusCode = 200) {
   res.status(statusCode).json([
     {
