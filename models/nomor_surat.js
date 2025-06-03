@@ -1,14 +1,19 @@
-import { DataTypes } from "sequelize";
+import { BelongsTo, DataTypes } from "sequelize";
 import db from "../config/database.js";
+import User from "./users.js";
 
 const NomorSurat = db.define(
-    "nomor-osis",
+    "nomor-surat",
     {
         id: {
+            type: DataTypes.UUID,
+            allowNull: false,
+            defaultValue: DataTypes.UUIDV4,
+            primaryKey: true,
+        },
+        urutan: {
             type: DataTypes.INTEGER,
             allowNull: false,
-            primaryKey: true,
-            autoIncrement: true,
         },
         jenis_surat: {
             type: DataTypes.STRING,
@@ -19,16 +24,8 @@ const NomorSurat = db.define(
             allowNull: false,
             defaultValue: "Sekretaris",
         },
-        tanggal: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-        },
-        bulan: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-        },
-        tahun: {
-            type: DataTypes.INTEGER,
+        tanggal_surat: {
+            type: DataTypes.DATE,
             allowNull: false,
         },
         perihal: {
@@ -45,5 +42,8 @@ const NomorSurat = db.define(
         timestamps: false,
     }
 );
+
+User.hasMany(NomorSurat,{foreignKey: 'pengirim', sourceKey: 'username'});
+NomorSurat.belongsTo(User, {foreignKey: 'pengirim', targetKey: 'username'});
 
 export default NomorSurat;
