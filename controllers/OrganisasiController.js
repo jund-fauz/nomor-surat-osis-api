@@ -9,7 +9,7 @@ function response(res, message, data, statusCode = 200) {
     ]);
 }
 
-export const getOrganosasi = async (req, res) => {
+export const getOrganisasi = async (req, res) => {
     try {
         const organisasi = await Organisasi.findAll();
         response(res, "Data retrieved successfully", organisasi, 200);

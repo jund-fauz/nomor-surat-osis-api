@@ -1,7 +1,7 @@
 import Users from "../models/users.js";
 import bcrypt from "bcrypt";
 
- function response(res, message, data, statusCode = 200) {
+function response(res, message, data, statusCode = 200) {
   res.status(statusCode).json([
     {
       message,
@@ -21,12 +21,12 @@ export const getUsers = async (req, res) => {
 };
 
 export const register = async (req, res) => {
+  const { username, nama_lengkap, password, organisasi, jabatan, id } =
+    req.body;
 
-  const { username, nama_lengkap, password, organisasi, jabatan, id } = req.body;
-  
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(password, salt);
-  
+
   let cekUsername;
   cekUsername = await Users.findOne({
     where: {
@@ -55,7 +55,6 @@ export const register = async (req, res) => {
 };
 
 export const login = async (req, res) => {
-
   try {
     const { username, password } = req.body;
     const users = await Users.findOne({
@@ -83,7 +82,8 @@ export const login = async (req, res) => {
 
 export const forgotPassword = async (req, res) => {
   try {
-    const { username, password } = req.body;
+    const { username, Newpassword, ConfirmPassword } = req.body;
+
     const users = await Users.findOne({
       where: {
         username: username,
@@ -94,8 +94,12 @@ export const forgotPassword = async (req, res) => {
       return response(res, "User not found", null, 404);
     }
 
+    if (Newpassword !== ConfirmPassword) {
+      return response(res, "Password does not match", null, 400);
+    }
+
     const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
+    const hashedPassword = await bcrypt.hash(Newpassword, salt);
 
     await Users.update(
       {

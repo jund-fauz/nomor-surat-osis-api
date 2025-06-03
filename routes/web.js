@@ -1,7 +1,7 @@
 import express from "express";
 import { getNomorSurat, createNomorSurat, updateNomorSurat, deleteNomorSurat } from "../controllers/NomorSuratController.js";
 import { getUsers, register, login, forgotPassword } from "../controllers/UsersController.js";
-import { getOrganosasi } from "../controllers/OrganisasiController.js";
+import { getOrganisasi } from "../controllers/OrganisasiController.js";
 
 const router = express.Router();
 
@@ -15,7 +15,7 @@ router.delete("/nomor-surat/:id", deleteNomorSurat);
 router.get("/users", getUsers);
 router.post("/users", register);
 router.post("/login", login);
-router.get("/organisasi", getOrganosasi);
+router.get("/organisasi", getOrganisasi);
 router.put("/forgot-password", forgotPassword);
 
 export default router;
