@@ -1,3 +1,4 @@
+import { validate } from 'uuid';
 import Organisasi from '../models/organisasi.js';
 
 function response(res, message, data, statusCode = 200) {
@@ -19,16 +20,25 @@ export const getOrganisasi = async (req, res) => {
     }
 }
 
-export const createOrganisasi = async (req, res) => {
-    const { id, nama_organisasi, jabatan,  } = req.body;
+export const createOrganisasi = async (organisasi, res) => {
     try {
         const organisasi = await Organisasi.create({
-            organisasi,
-            nama,
+            organisasi
         });
         response(res, "Organisasi created successfully", organisasi, 201);
     } catch (error) {
         console.error(error);
         response(res, error.message, null, 500);
     }
+}
+
+export const validateOrganisasi = async (organisasi) => {
+    let valid = false
+    try {
+        const { nama, kode_divisi, divisi, kode_jenis_surat, jenis_surat, format_nomor_surat, periode, password, periode_dimulai } = organisasi
+        val = typeof nama === 'string' && Array.isArray(kode_divisi) && Array.isArray(divisi) && Array.isArray(kode_jenis_surat) && Array.isArray(jenis_surat) && typeof format_nomor_surat === 'string' && typeof periode === 'number' && typeof password === 'string' && typeof periode_dimulai === Date
+    } catch (error) {
+        
+    }
+    return valid
 }

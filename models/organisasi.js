@@ -1,41 +1,50 @@
 import { DataTypes } from "sequelize";
 import db from "../config/database.js";
+import { v4 } from "uuid";
 
 const Organisasi = db.define(
   "organisasi",
   {
-    id_organisasi: {
-      type: DataTypes.INTEGER,
+    id: {
+      type: DataTypes.UUID,
+      defaultValue: v4(),
       allowNull: false,
       primaryKey: true,
-      autoIncrement: true,
     },
-    nama_organisasi: {
-      type: DataTypes.STRING,
+    nama: {
+      type: DataTypes.TEXT,
       allowNull: false,
     },
-    jabatan: {
-      type: DataTypes.STRING,
+    kode_divisi: {
+      type: DataTypes.ARRAY(DataTypes.STRING),
+      allowNull: false,
+    },
+    divisi: {
+      type: DataTypes.ARRAY(DataTypes.STRING),
+      allowNull: false,
+    },
+    kode_jenis_surat: {
+      type: DataTypes.ARRAY(DataTypes.STRING),
       allowNull: false,
     },
     jenis_surat: {
-      type: DataTypes.STRING,
+      type: DataTypes.ARRAY(DataTypes.STRING),
       allowNull: false,
     },
-    id_jenis_surat: {
-      type: DataTypes.INTEGER,
+    format_nomor_surat: {
+      type: DataTypes.TEXT,
       allowNull: false,
     },
     periode: {
-      type: DataTypes.STRING,
+      type: DataTypes.SMALLINT,
       allowNull: false,
     },
     password: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT,
       allowNull: false,
     },
     periode_dimulai: {
-      type: DataTypes.STRING,
+      type: DataTypes.DATE,
       allowNull: false,
     },
   },

@@ -1,4 +1,5 @@
-import Users from "../models/users.js";
+import { validate } from "uuid";
+import Akun from "../models/akun.js";
 import bcrypt from "bcrypt";
 
 function response(res, message, data, statusCode = 200) {
@@ -10,25 +11,25 @@ function response(res, message, data, statusCode = 200) {
   ]);
 }
 
-export const getUsers = async (req, res) => {
+export const getAkun = async (req, res) => {
   try {
-    const users = await Users.findAll();
-    response(res, "Data retrieved successfully", users);
+    const akun = await Akun.findAll();
+    response(res, "Data retrieved successfully", akun);
   } catch (error) {
     console.error(error);
     response(res, error.message, null, 500);
   }
 };
 
-export const register = async (req, res) => {
-  const { username, nama_lengkap, password, organisasi, jabatan, id } =
-    req.body;
+export const register = async (akun, res) => {
+  const { id_organisasi, username, nama_lengkap, password, jabatan } =
+    akun
 
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(password, salt);
 
   let cekUsername;
-  cekUsername = await Users.findOne({
+  cekUsername = await Akun.findOne({
     where: {
       username: username,
     },
@@ -39,15 +40,15 @@ export const register = async (req, res) => {
   }
 
   try {
-    const users = await Users.create({
+    const akun = await Akun.create({
+      id_organisasi,
       username,
       nama_lengkap,
-      organisasi,
       jabatan,
       password: hashedPassword,
     });
 
-    response(res, "Data retrieved successfully", users, 201);
+    response(res, "Data retrieved successfully", akun, 201);
   } catch (error) {
     console.error(error);
     response(res, error.message, null, 500);
@@ -57,23 +58,23 @@ export const register = async (req, res) => {
 export const login = async (req, res) => {
   try {
     const { username, password } = req.body;
-    const users = await Users.findOne({
+    const akun = await Akun.findOne({
       where: {
         username: username,
       },
     });
 
-    if (!users) {
+    if (!akun) {
       return response(res, "User not found", null, 404);
     }
 
-    const cocok = await bcrypt.compare(password, users.password);
+    const cocok = await bcrypt.compare(password, akun.password);
 
     if (!cocok) {
       return response(res, "password atau username salah", null, 401);
     }
 
-    response(res, "Login successful", users);
+    response(res, "Login successful", akun);
   } catch (error) {
     console.error(error);
     response(res, error.message, null, 500);
@@ -84,13 +85,13 @@ export const forgotPassword = async (req, res) => {
   try {
     const { username, Newpassword, ConfirmPassword } = req.body;
 
-    const users = await Users.findOne({
+    const akun = await Akun.findOne({
       where: {
         username: username,
       },
     });
 
-    if (!users) {
+    if (!akun) {
       return response(res, "User not found", null, 404);
     }
 
@@ -101,7 +102,7 @@ export const forgotPassword = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(Newpassword, salt);
 
-    await Users.update(
+    await Akun.update(
       {
         password: hashedPassword,
       },
@@ -118,3 +119,15 @@ export const forgotPassword = async (req, res) => {
     response(res, error.message, null, 500);
   }
 };
+
+
+export const validateAkun = async (akun) => {
+  let valid = false
+  try {
+    const { id_organisasi, username, nama_lengkap, jabatan, password } = akun
+    valid = validate(id_organisasi) && typeof username ==='string' && typeof nama_lengkap ==='string' && typeof jabatan ==='string' && typeof password ==='string'
+  } catch (error) {
+    
+  }
+  return valid
+}

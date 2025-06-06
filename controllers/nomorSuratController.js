@@ -1,5 +1,5 @@
 import NomorSurat from "../models/nomor_surat.js";
-import Users from "../models/users.js";
+import Akun from "../models/akun.js";
 
 function response(res, message, data, statusCode = 200) {
   res.status(statusCode).json([
@@ -22,10 +22,10 @@ export const getNomorSurat = async (req, res) => {
 
 
 export const createNomorSurat = async (req, res) => {
-  const { jenis_surat, pengirim,tanggal_surat, perihal, link } = req.body;
-  
-  const user = await Users.findOne({
-    where:{
+  const { jenis_surat, pengirim, tanggal_surat, perihal, link } = req.body;
+
+  const user = await Akun.findOne({
+    where: {
       username: pengirim
     }
   })
@@ -42,7 +42,7 @@ export const createNomorSurat = async (req, res) => {
       urutan,
       jenis_surat,
       pengirim,
-      tanggal_surat,  
+      tanggal_surat,
       perihal,
       link,
     });
