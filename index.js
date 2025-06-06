@@ -5,11 +5,12 @@ import router from "./routes/web.js";
 import { createOrganisasi, validateOrganisasi } from "./controllers/OrganisasiController.js";
 import { register, validateAkun } from "./controllers/AkunController.js";
 import { validate } from "uuid";
+import { getNomorSurat } from "./controllers/NomorSuratController.js";
 
 dotenv.config();
 
 const app = express();
-const port = process.env.DATABASE_PORT || 80;
+const port = process.env.DATABASE_PORT || 3000;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -19,6 +20,8 @@ app.use(router);
 app.get("/", (req, res) => {
     res.send("Api Siap!");
 });
+
+app.get("/nomor-surat", getNomorSurat)
 
 app.post("/admin/register", (req, res) => {
     const { akun, organisasi } = req.body;

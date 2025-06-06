@@ -1,6 +1,7 @@
 import { BelongsTo, DataTypes } from "sequelize";
 import db from "../config/database.js";
 import Akun from "./akun.js";
+import Organisasi from "./organisasi.js";
 
 const NomorSurat = db.define(
     "nomor-surat",
@@ -16,6 +17,10 @@ const NomorSurat = db.define(
             allowNull: false,
         },
         id_pengirim: {
+            type: DataTypes.UUID,
+            allowNull: false,
+        },
+        id_organisasi: {
             type: DataTypes.UUID,
             allowNull: false,
         },
@@ -44,5 +49,7 @@ const NomorSurat = db.define(
 
 Akun.hasMany(NomorSurat,{foreignKey: 'id_pengirim', sourceKey: 'id'});
 NomorSurat.belongsTo(Akun, {foreignKey: 'id_pengirim', targetKey: 'id'});
+Organisasi.hasMany(NomorSurat, { foreignKey: 'id_organisasi', sourceKey: 'id' });
+NomorSurat.belongsTo(Organisasi, { foreignKey: 'id_organisasi', targetKey: 'id' });
 
 export default NomorSurat;

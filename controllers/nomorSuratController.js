@@ -2,17 +2,18 @@ import NomorSurat from "../models/nomor_surat.js";
 import Akun from "../models/akun.js";
 
 function response(res, message, data, statusCode = 200) {
-  res.status(statusCode).json([
+  res.status(statusCode).json(
     {
       message,
       payload: data,
     },
-  ]);
+  );
 }
 
 export const getNomorSurat = async (req, res) => {
+  const { organisasi } = req.body;
   try {
-    const nomorSurat = await NomorSurat.findAll();
+    const nomorSurat = await NomorSurat.findAll({ where: { id_organisasi: organisasi } });
     response(res, "Data retrieved successfully", nomorSurat);
   } catch (error) {
     console.error(error);
