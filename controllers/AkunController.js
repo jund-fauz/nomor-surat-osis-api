@@ -1,12 +1,14 @@
 import { validate } from "uuid";
 import Akun from "../models/akun.js";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
-function response(res, message, data, statusCode = 200) {
+function response(res, message, data, statusCode = 200, token = null) {
   res.status(statusCode).json([
     {
       message,
       payload: data,
+      token: token,
     },
   ]);
 }
@@ -21,25 +23,21 @@ export const getAkun = async (req, res) => {
   }
 };
 
-export const register = async (akun, res) => {
-  const { id_organisasi, username, nama_lengkap, password, jabatan } =
-    akun
-
-  const salt = await bcrypt.genSalt(10);
-  const hashedPassword = await bcrypt.hash(password, salt);
-
-  let cekUsername;
-  cekUsername = await Akun.findOne({
-    where: {
-      username: username,
-    },
-  });
-
-  if (cekUsername) {
-    return response(res, "Username already exists", null, 400);
-  }
+export const register = async (req, res) => {
+  const { id_organisasi, username, nama_lengkap, password, jabatan } = req.body;
 
   try {
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    const cekUsername = await Akun.findOne({
+      where: { username },
+    });
+
+    if (cekUsername) {
+      return response(res, "Username already exists", null, 400);
+    }
+
     const akun = await Akun.create({
       id_organisasi,
       username,
@@ -48,7 +46,7 @@ export const register = async (akun, res) => {
       password: hashedPassword,
     });
 
-    response(res, "Data retrieved successfully", akun, 201);
+    response(res, "Akun berhasil dibuat", akun, 201);
   } catch (error) {
     console.error(error);
     response(res, error.message, null, 500);
@@ -74,7 +72,13 @@ export const login = async (req, res) => {
       return response(res, "password atau username salah", null, 401);
     }
 
-    response(res, "Login successful", akun);
+    const token = jwt.sign(
+      { id: akun.id,username: akun.username, Organisasi: akun.Organisasi, role: akun.jabatan },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
+
+    response(res, "Login successful", akun, 200, token);
   } catch (error) {
     console.error(error);
     response(res, error.message, null, 500);
@@ -120,14 +124,16 @@ export const forgotPassword = async (req, res) => {
   }
 };
 
-
 export const validateAkun = async (akun) => {
-  let valid = false
+  let valid = false;
   try {
-    const { id_organisasi, username, nama_lengkap, jabatan, password } = akun
-    valid = validate(id_organisasi) && typeof username ==='string' && typeof nama_lengkap ==='string' && typeof jabatan ==='string' && typeof password ==='string'
-  } catch (error) {
-    
-  }
-  return valid
-}
+    const { id_organisasi, username, nama_lengkap, jabatan, password } = akun;
+    valid =
+      validate(id_organisasi) &&
+      typeof username === "string" &&
+      typeof nama_lengkap === "string" &&
+      typeof jabatan === "string" &&
+      typeof password === "string";
+  } catch (error) {}
+  return valid;
+};
