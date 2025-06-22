@@ -90,3 +90,18 @@ export const deleteNomorSurat = async (req, res) => {
     response(res, error.message, null, 500);
   }
 };
+
+export const searchNomorSurat = async (req, res) => {
+  const { organisasi, query, key } = req.body;
+  try {
+    let nomorSurat;
+    if (key === 'nomor')
+      nomorSurat = await NomorSurat.findAll({ where: { id_organisasi: organisasi, urutan: query } });
+    else
+      nomorSurat = await NomorSurat.findAll({ where: { id_organisasi: organisasi },  });
+    response(res, "Data retrieved successfully", nomorSurat);
+  } catch (error) {
+    console.error(error);
+    response(res, error.message, null, 500);
+  }
+};
