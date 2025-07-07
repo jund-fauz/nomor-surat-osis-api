@@ -23,8 +23,8 @@ export const getAkun = async (req, res) => {
   }
 };
 
-export const register = async (req, res) => {
-  const { id_organisasi, username, nama_lengkap, password, jabatan } = req.body;
+export const register = async (akun, res) => {
+  const { id_organisasi, username, nama_lengkap, password, jabatan } = akun;
 
   try {
     const salt = await bcrypt.genSalt(10);

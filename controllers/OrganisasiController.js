@@ -1,4 +1,6 @@
+import { validate } from "uuid";
 import Organisasi from "../models/organisasi.js";
+import { register, validateAkun } from "./AkunController.js";
 
 function response(res, message, data, statusCode = 200) {
   res.status(statusCode).json([
@@ -19,15 +21,41 @@ export const getOrganisasi = async (req, res) => {
   }
 };
 
-export const createOrganisasi = async (organisasi, res) => {
-  try {
-    const organisasi = await Organisasi.create({
-      organisasi,
-    });
-    response(res, "Organisasi created successfully", organisasi, 201);
-  } catch (error) {
-    console.error(error);
-    response(res, error.message, null, 500);
+export const createOrganisasi = async (req, res) => {
+  const { akun, organisasi } = req.body;
+  if (!validate(organisasi))
+    if (validateOrganisasi(organisasi)) {
+      try {
+        const new_organisasi = await Organisasi.create({
+          organisasi,
+        });
+        response(res, "Organisasi created successfully", new_organisasi, 201);
+      } catch (error) {
+        console.error(error);
+        response(res, error.message, null, 500);
+      }
+      akun.id_organisasi = organisasi.id
+      if (validateAkun(akun))
+        register(akun, res)
+      else
+        res.status(400).json({
+          message: "Invalid request body",
+          at: 'akun'
+        })
+    } else
+      res.status(400).json({
+        message: "Invalid request body",
+        at: 'organisasi'
+      })
+  else {
+    akun.id_organisasi = organisasi
+    if (validateAkun(akun))
+      register(akun, res)
+    else
+      res.status(400).json({
+        message: "Invalid request body",
+        at: 'akun'
+      })
   }
 };
 

@@ -9,7 +9,7 @@ function response(res, message, data, statusCode = 200) {
 }
 
 export const getNomorSurat = async (req, res) => {
-  const userId = req.akun_id;
+  const userId = req.body.akun_id;
 
   try {
     if (!userId) {
@@ -55,9 +55,9 @@ export const createNomorSurat = async (req, res) => {
       return response(res, "User not found", null, 404);
     }
 
-    const totalSurat = await NomorSurat.count();
+    const totalSurat = await NomorSurat.findAll({ where: { id_organisasi: user.id_organisasi } }).count();
     const urutan = totalSurat + 1;
-    const now= new Date();
+    const now = new Date().toISOString().split('T')[0];
 
     const nomorSurat = await NomorSurat.create({
       urutan,
