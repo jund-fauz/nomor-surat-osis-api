@@ -6,6 +6,11 @@ import { createOrganisasi, getOrganisasi } from "../controllers/OrganisasiContro
 
 const router = express.Router();
 
+//test
+router.get("/", (req, res) => {
+  res.send("API Berhasil!");
+})
+
 //nomor surat
 router.get("/nomor-surat",auth, getNomorSurat);
 router.post("/nomor-surat",auth, createNomorSurat);
