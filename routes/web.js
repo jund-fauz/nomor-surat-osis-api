@@ -1,5 +1,5 @@
 import express from "express";
-import { getNomorSurat, createNomorSurat, updateNomorSurat, deleteNomorSurat, searchNomorSurat } from "../controllers/NomorSuratController.js";
+import { getNomorSurat, createNomorSurat, updateNomorSurat, deleteNomorSurat, searchNomorSurat } from "../controllers/nomorSuratController.js";
 import { getAkun, register, login, forgotPassword } from "../controllers/AkunController.js";
 import { auth } from "./middleware/auth.js";
 import { createOrganisasi, getOrganisasi } from "../controllers/OrganisasiController.js";
