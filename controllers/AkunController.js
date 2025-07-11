@@ -75,7 +75,7 @@ export const login = async (req, res) => {
     const token = jwt.sign(
       { id: akun.id,username: akun.username, Organisasi: akun.Organisasi, role: akun.jabatan },
       process.env.JWT_SECRET,
-      { expiresIn: "1h" }
+      { expiresIn: "24h" }
     );
 
     response(res, "Login successful", akun, 200, token);
@@ -87,7 +87,7 @@ export const login = async (req, res) => {
 
 export const forgotPassword = async (req, res) => {
   try {
-    const { username, Newpassword, ConfirmPassword } = req.body;
+    const { username, newPassword, confirmPassword } = req.body;
 
     const akun = await Akun.findOne({
       where: {
@@ -99,12 +99,12 @@ export const forgotPassword = async (req, res) => {
       return response(res, "User not found", null, 404);
     }
 
-    if (Newpassword !== ConfirmPassword) {
+    if (newPassword !== confirmPassword) {
       return response(res, "Password does not match", null, 400);
     }
 
     const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(Newpassword, salt);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
 
     await Akun.update(
       {

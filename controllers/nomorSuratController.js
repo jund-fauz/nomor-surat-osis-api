@@ -9,7 +9,7 @@ function response(res, message, data, statusCode = 200) {
 }
 
 export const getNomorSurat = async (req, res) => {
-  const userId = req.body.akun_id;
+  const userId = req.akun_id;
 
   try {
     if (!userId) {
@@ -27,7 +27,7 @@ export const getNomorSurat = async (req, res) => {
     const nomorSurat = await NomorSurat.findAll({
       where: {
         id_organisasi: user.id_organisasi,
-      }
+      },
     });
 
     response(res, "Data retrieved successfully", nomorSurat);
@@ -55,15 +55,17 @@ export const createNomorSurat = async (req, res) => {
       return response(res, "User not found", null, 404);
     }
 
-    const totalSurat = await NomorSurat.findAll({ where: { id_organisasi: user.id_organisasi } }).count();
+    const totalSurat = await NomorSurat.count({
+      where: { id_organisasi: user.id_organisasi },
+    });
     const urutan = totalSurat + 1;
-    const now = new Date().toISOString().split('T')[0];
+    const now = new Date().toISOString().split("T")[0];
 
     const nomorSurat = await NomorSurat.create({
       urutan,
       jenis,
       id_pengirim: user.id,
-      tanggal:now,
+      tanggal: now,
       link,
       perihal,
       id_organisasi: user.id_organisasi,
@@ -94,7 +96,7 @@ export const updateNomorSurat = async (req, res) => {
       return response(res, "User not found", null, 404);
     }
 
-    const now = new Date(); 
+    const now = new Date();
     const [updated] = await NomorSurat.update(
       {
         jenis,
@@ -124,7 +126,6 @@ export const updateNomorSurat = async (req, res) => {
   }
 };
 
-
 export const deleteNomorSurat = async (req, res) => {
   try {
     await NomorSurat.destroy({
@@ -143,10 +144,14 @@ export const searchNomorSurat = async (req, res) => {
   const { organisasi, query, key } = req.body;
   try {
     let nomorSurat;
-    if (key === 'nomor')
-      nomorSurat = await NomorSurat.findAll({ where: { id_organisasi: organisasi, urutan: query } });
+    if (key === "nomor")
+      nomorSurat = await NomorSurat.findAll({
+        where: { id_organisasi: organisasi, urutan: query },
+      });
     else
-      nomorSurat = await NomorSurat.findAll({ where: { id_organisasi: organisasi },  });
+      nomorSurat = await NomorSurat.findAll({
+        where: { id_organisasi: organisasi },
+      });
     response(res, "Data retrieved successfully", nomorSurat);
   } catch (error) {
     console.error(error);
