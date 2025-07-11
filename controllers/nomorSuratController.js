@@ -1,6 +1,13 @@
 import NomorSurat from "../models/nomor_surat.js";
 import Akun from "../models/akun.js";
 
+/**
+ * Sends a standardized JSON HTTP response with a message and payload.
+ * @param {object} res - The HTTP response object.
+ * @param {string} message - The message to include in the response.
+ * @param {*} data - The payload data to include in the response.
+ * @param {number} [statusCode=200] - The HTTP status code for the response.
+ */
 function response(res, message, data, statusCode = 200) {
   res.status(statusCode).json({
     message,
