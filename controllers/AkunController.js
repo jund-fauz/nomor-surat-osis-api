@@ -23,8 +23,12 @@ export const getAkun = async (req, res) => {
   }
 };
 
-export const register = async (akun, res) => {
-  const { id_organisasi, username, nama_lengkap, password, jabatan } = akun;
+export const register = async (req, res) => {
+  const { id_organisasi, username, nama_lengkap, password, jabatan } = req.body;
+
+  if (!id_organisasi || !username || !nama_lengkap || !password || !jabatan) {
+    return response(res, "All fields are required", null, 400);
+  }
 
   try {
     const salt = await bcrypt.genSalt(10);
